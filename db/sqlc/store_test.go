@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -14,7 +13,7 @@ func TestTransferTx(t *testing.T) {
 	fromAccount := createRandomAccount(t)
 	toAccount := createRandomAccount(t)
 
-	fmt.Println(">> before:", fromAccount.Balance, toAccount.Balance)
+	//fmt.Println(">> before:", fromAccount.Balance, toAccount.Balance)
 	chanErr := make(chan error)
 	transferRes := make(chan TransferRes)
 	exited := make(map[int]bool)
@@ -82,7 +81,7 @@ func TestTransferTx(t *testing.T) {
 		require.NotEmpty(t, resToAccount)
 		require.Equal(t, resToAccount.ID, toAccount.ID)
 
-		fmt.Println(">> tx:", resFromAccount.Balance, resToAccount.Balance)
+		//fmt.Println(">> tx:", resFromAccount.Balance, resToAccount.Balance)
 		diff1 := fromAccount.Balance - resFromAccount.Balance
 		diff2 := resToAccount.Balance - toAccount.Balance
 		require.Equal(t, diff1, diff2)
@@ -97,7 +96,7 @@ func TestTransferTx(t *testing.T) {
 
 	updateFromAccount, err := testQueries.GetAccount(context.Background(), fromAccount.ID)
 	updateToAccount, err := testQueries.GetAccount(context.Background(), toAccount.ID)
-	fmt.Println(">> after:", updateFromAccount.Balance, updateToAccount.Balance)
+	//fmt.Println(">> after:", updateFromAccount.Balance, updateToAccount.Balance)
 	require.NoError(t, err)
 
 	require.Equal(t, fromAccount.Balance-int64(n)*amount, updateFromAccount.Balance)
@@ -112,7 +111,7 @@ func TestTransferTxDeadlock(t *testing.T) {
 	account1 := createRandomAccount(t)
 	account2 := createRandomAccount(t)
 
-	fmt.Println(">> before:", account1.Balance, account2.Balance)
+	//fmt.Println(">> before:", account1.Balance, account2.Balance)
 	chanErr := make(chan error)
 
 	amount := int64(10)
@@ -143,7 +142,7 @@ func TestTransferTxDeadlock(t *testing.T) {
 
 	updateFromAccount, err := testQueries.GetAccount(context.Background(), account1.ID)
 	updateToAccount, err := testQueries.GetAccount(context.Background(), account2.ID)
-	fmt.Println(">> after:", updateFromAccount.Balance, updateToAccount.Balance)
+	//fmt.Println(">> after:", updateFromAccount.Balance, updateToAccount.Balance)
 	require.NoError(t, err)
 
 	require.Equal(t, account1.Balance, updateFromAccount.Balance)
