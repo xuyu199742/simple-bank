@@ -7,10 +7,22 @@ import (
 )
 
 type (
-	Store struct {
-		*Queries
-		db *pgxpool.Pool
+	Store interface {
+		Querier
+		TransferTx(ctx context.Context, arg TransferParams) (res TransferRes, err error)
 	}
+
+	StorePostgresSql struct {
+		db *pgxpool.Pool
+		*Queries
+	}
+
+	//
+
+	//StoreMysqlSql struct {
+	//	db *pgxpool.Pool
+	//	*Queries
+	//}
 
 	TransferParams struct {
 		FromAccountId int64 `json:"from_account_id"`
@@ -27,14 +39,14 @@ type (
 	}
 )
 
-func NewStore(db *pgxpool.Pool) *Store {
-	return &Store{
+func NewStore(db *pgxpool.Pool) Store {
+	return &StorePostgresSql{
 		Queries: New(db),
 		db:      db,
 	}
 }
 
-func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
+func (store *StorePostgresSql) execTx(ctx context.Context, fn func(*Queries) error) error {
 	tx, err := store.db.Begin(ctx)
 	if err != nil {
 		return err
@@ -51,7 +63,7 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 	return tx.Commit(ctx)
 }
 
-func (store *Store) TransferTx(ctx context.Context, arg TransferParams) (res TransferRes, err error) {
+func (store *StorePostgresSql) TransferTx(ctx context.Context, arg TransferParams) (res TransferRes, err error) {
 	err = store.execTx(ctx, func(queries *Queries) error {
 		res.Transfer, err = queries.CreateTransfer(ctx, CreateTransferParams{
 			FromAccountID: arg.FromAccountId,
@@ -91,7 +103,7 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferParams) (res Tra
 	return
 }
 
-func (store *Store) addMoney(
+func (store *StorePostgresSql) addMoney(
 	ctx context.Context,
 	q *Queries,
 	accountID1, accountAmount1, accountID2, accountAmount2 int64,

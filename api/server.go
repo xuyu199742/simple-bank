@@ -13,7 +13,7 @@ const (
 
 type (
 	Server struct {
-		db     *db.Store
+		db     db.Store
 		router *gin.Engine
 	}
 
@@ -24,7 +24,7 @@ type (
 	}
 )
 
-func NewServer(db *db.Store) *Server {
+func NewServer(db db.Store) *Server {
 	server := &Server{
 		db:     db,
 		router: gin.Default(),
@@ -55,6 +55,6 @@ func (s *Server) resFail(ctx *gin.Context, err error, code int) {
 	})
 }
 
-func (s *Server) Star() error {
-	return s.router.Run(serverAdd)
+func (s *Server) Star(address string) error {
+	return s.router.Run(address)
 }
