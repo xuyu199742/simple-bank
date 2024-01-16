@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	db "simple-bank/db/sqlc"
@@ -48,7 +47,6 @@ func (s *Server) GetAccount(ctx *gin.Context) {
 		s.resFail(ctx, err, 400)
 		return
 	}
-	fmt.Println(arg)
 
 	account, err := s.db.GetAccount(ctx, arg.ID)
 	if err != nil {

@@ -20,5 +20,8 @@ server:
 test:
 	go test -v -cover ./...
 
+mock:
+	 mockgen -package mock_db  -destination db/mock/store.go simple-bank/db/sqlc Store
 
-.PHONY:createDb postgres dropDb migrateUp migrateDown sqlc test server
+
+.PHONY:createDb postgres dropDb migrateUp migrateDown sqlc test server mock

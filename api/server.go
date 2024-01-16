@@ -36,7 +36,7 @@ func NewServer(db db.Store) *Server {
 
 func (s *Server) setUpRouter() {
 	s.router.POST("/account", s.CreateAccount)
-	s.router.POST("/account/:id", s.GetAccount)
+	s.router.GET("/account/:id", s.GetAccount)
 	s.router.GET("/accounts", s.ListAccount)
 }
 
